@@ -1,0 +1,13 @@
+# Node modules (WAJIB)
+node_modules/
+**/node_modules/
+
+# Environment
+.env
+
+# Build
+dist/
+build/
+
+# Logs
+npm-debug.log*
