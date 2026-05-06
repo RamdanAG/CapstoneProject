@@ -1,13 +1,12 @@
 import { Router } from 'express'
-import { getAll, getOne, create, update, remove } from '../controllers/item.controller.js'
+import { getAll_, getOne, create, updateItem, removeItem } from '../controllers/item.controller.js'
 
 const router = Router()
 
-// RESTful convention
-router.get('/', getAll)        // GET    /api/items
-router.get('/:id', getOne)     // GET    /api/items/:id
-router.post('/', create)       // POST   /api/items
-router.put('/:id', update)     // PUT    /api/items/:id
-router.delete('/:id', remove)  // DELETE /api/items/:id
+router.get('/',     getAll_)
+router.get('/:id',  getOne)
+router.post('/',    create)
+router.put('/:id',  updateItem)
+router.delete('/:id', removeItem)
 
 export default router

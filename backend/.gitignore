@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+
+# Data — jangan commit data user/produksi
+src/data/data.json
+
+# AI Model — file besar, taruh di cloud storage
+src/ai/models/*.keras
+src/ai/models/*.h5
+src/ai/models/*.onnx
+src/ai/models/*.pt
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
