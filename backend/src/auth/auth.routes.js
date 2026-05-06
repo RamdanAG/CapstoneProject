@@ -1,38 +1,58 @@
 import { Router } from 'express'
 import passport from 'passport'
+import { register, login } from './auth.controller.js'
 
 const router = Router()
+const FRONTEND = process.env.FRONTEND_URL || 'http://localhost:5173'
 
-// 1. Redirect ke Google login
-router.get('/google', passport.authenticate('google', {
-  scope: ['profile', 'email']
-}))
+// ── Manual ────────────────────────────────────────────
+router.post('/register', register)
+router.post('/login', login)
 
-// 2. Callback setelah login Google
+// ── Google OAuth ──────────────────────────────────────
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }))
+
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/auth/failed' }),
-  (req, res) => {
-    // Login sukses — redirect ke frontend
-    res.redirect(process.env.FRONTEND_URL || 'http://localhost:5173')
+  passport.authenticate('google', { failWithError: true }),
+  // Sukses — sudah terdaftar
+  (req, res) => res.redirect(FRONTEND),
+  // Gagal — belum terdaftar
+  (err, req, res, next) => {
+    const info = err // passport melempar info di failWithError
+    if (info?.needsRegister) {
+      // Simpan data Google ke session sementara
+      req.session.pendingGoogle = {
+        googleId: info.googleId,
+        name:     info.name,
+        email:    info.email,
+        avatar:   info.avatar,
+      }
+      const params = new URLSearchParams({
+        source: 'google',
+        name:   info.name  || '',
+        email:  info.email || '',
+        avatar: info.avatar|| '',
+        googleId: info.googleId,
+      })
+      return res.redirect(`${FRONTEND}/register?${params}`)
+    }
+    res.redirect(`${FRONTEND}/login?error=google_failed`)
   }
 )
 
-// 3. Cek siapa yang sedang login
+// GET /auth/me
 router.get('/me', (req, res) => {
   if (!req.user) return res.status(401).json({ error: 'Belum login' })
-  res.json({ data: req.user })
+  const { password: _, ...safeUser } = req.user
+  res.json({ data: safeUser })
 })
 
-// 4. Logout
+// POST /auth/logout
 router.post('/logout', (req, res, next) => {
   req.logout(err => {
     if (err) return next(err)
     res.json({ message: 'Berhasil logout' })
   })
-})
-
-router.get('/failed', (req, res) => {
-  res.status(401).json({ error: 'Login Google gagal' })
 })
 
 export default router
