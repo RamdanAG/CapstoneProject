@@ -49,3 +49,6 @@ body { background: var(--bg); color: var(--text); font-family: system-ui, sans-s
 @media (max-width: 768px) {
   .main-wrapper { margin-left: 0 !important; }
 }
+@media (max-width: 768px) {
+  .chart-grid-2 { grid-template-columns: 1fr !important; }
+}

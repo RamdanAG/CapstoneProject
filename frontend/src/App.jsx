@@ -4,6 +4,7 @@ import SummaryBar from './components/SummaryBar'
 import ReviewCard from './components/ReviewCard'
 import HistoryDetail from './pages/HistoryDetail'
 import api from './services/api'
+import AnalyticsChart from './components/AnalyticsChart'
 
 const LIMIT_OPTIONS = [25, 50, 100, 200, 500, 'Semua']
 const card  = { background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, padding: '22px 24px', marginBottom: 24 }
@@ -232,6 +233,12 @@ export default function App() {
               ))}
             </div>
           </section>
+        )}
+        {activeResult && (
+          <AnalyticsChart
+            summary={activeResult.summary}
+            reviews={activeResult.reviews}
+          />
         )}
 
         {/* REVIEWS */}
